@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 import { 
   HiOutlineDocumentText, 
   HiOutlineLightningBolt, 
@@ -10,6 +11,8 @@ import {
 } from 'react-icons/hi';
 
 export default function Home() {
+  const { data: session } = useSession();
+
   const features = [
     {
       name: 'AI-Powered Generation',
@@ -69,12 +72,21 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="flex flex-col sm:flex-row justify-center gap-4"
           >
-            <Link
-              href="/register"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-bold transition-all hover-lift shadow-lg shadow-blue-500/30"
-            >
-              Create Free Resume
-            </Link>
+            {session ? (
+              <Link
+                href="/dashboard"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-bold transition-all hover-lift shadow-lg shadow-blue-500/30"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/register"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-bold transition-all hover-lift shadow-lg shadow-blue-500/30"
+              >
+                Create Free Resume
+              </Link>
+            )}
             <Link
               href="#how-it-works"
               className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 px-8 py-4 rounded-full text-lg font-medium transition-all hover-lift"
