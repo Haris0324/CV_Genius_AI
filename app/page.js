@@ -206,6 +206,93 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Templates Section */}
+      <section id="templates" className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+              Professional <span className="text-gradient">Templates</span>
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Stand out with modern, ATS-friendly designs engineered to get you past the screening algorithms and onto the hiring manager's desk.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Template 1 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="group relative rounded-2xl bg-slate-100 dark:bg-slate-800 p-4 hover-lift overflow-hidden border border-slate-200 dark:border-slate-700"
+            >
+              <div className="aspect-[1/1.4] bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden relative">
+                <div className="absolute inset-x-0 top-0 h-1/4 bg-blue-600/10 dark:bg-blue-900/20"></div>
+                <div className="p-4 space-y-3 relative z-10 pt-8">
+                  <div className="h-3 w-1/2 bg-blue-600/20 rounded"></div>
+                  <div className="h-2 w-1/3 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                  <div className="pt-4 space-y-2">
+                    <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                    <div className="h-2 w-5/6 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="font-bold text-slate-900 dark:text-white">The Modern</h3>
+                <p className="text-sm text-slate-500">Clean, crisp, impactful.</p>
+              </div>
+            </motion.div>
+
+            {/* Template 2 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="group relative rounded-2xl bg-slate-100 dark:bg-slate-800 p-4 hover-lift overflow-hidden border border-slate-200 dark:border-slate-700"
+            >
+               <div className="aspect-[1/1.4] bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden relative flex">
+                <div className="w-1/4 h-full bg-slate-100 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700"></div>
+                <div className="p-4 space-y-3 w-3/4 pt-8">
+                  <div className="h-3 w-3/4 bg-slate-800 dark:bg-slate-300 rounded"></div>
+                  <div className="h-2 w-1/2 bg-slate-200 dark:bg-slate-700 rounded mb-4"></div>
+                  <div className="space-y-2">
+                    <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                    <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="font-bold text-slate-900 dark:text-white">The Classic</h3>
+                <p className="text-sm text-slate-500">Traditional corporate layout.</p>
+              </div>
+            </motion.div>
+
+            {/* Template 3 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="group relative rounded-2xl bg-slate-100 dark:bg-slate-800 p-4 hover-lift overflow-hidden border border-slate-200 dark:border-slate-700"
+            >
+               <div className="aspect-[1/1.4] bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden p-6 text-center space-y-4">
+                  <div className="mx-auto h-12 w-12 rounded-full bg-slate-200 dark:bg-slate-700 mb-2"></div>
+                  <div className="mx-auto h-3 w-1/2 bg-slate-800 dark:bg-slate-300 rounded"></div>
+                  <div className="mx-auto h-2 w-1/3 bg-slate-200 dark:bg-slate-700 rounded mb-4"></div>
+                  <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded"></div>
+                    <div className="h-2 w-5/6 bg-slate-200 dark:bg-slate-700 rounded mx-auto"></div>
+                  </div>
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="font-bold text-slate-900 dark:text-white">The Minimal</h3>
+                <p className="text-sm text-slate-500">Focus on the data.</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="pricing" className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

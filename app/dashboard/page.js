@@ -19,23 +19,65 @@ export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
   
-  // Mock Data for frontend demo
+  // Real Data
   const [stats, setStats] = useState({
-    totalResumes: 2,
+    totalResumes: 0,
     plan: 'FREE',
-    resumesLeft: 1
+    resumesLeft: 3 // Default, would come from user session ideally
   });
 
-  const [resumes, setResumes] = useState([
-    { _id: '1', title: 'Software Engineer Resume', updatedAt: '2 days ago', template: 'Modern' },
-    { _id: '2', title: 'Frontend Developer (React)', updatedAt: '1 week ago', template: 'Minimal' }
-  ]);
+  const [resumes, setResumes] = useState([]);
+  const [isLoadingResumes, setIsLoadingResumes] = useState(true);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     }
   }, [status, router]);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchResumes();
+      
+      // Update plan based on session if available
+      setStats(prev => ({
+        ...prev,
+        plan: session?.user?.subscription || 'FREE'
+      }));
+    }
+  }, [status, session]);
+
+  const fetchResumes = async () => {
+    setIsLoadingResumes(true);
+    try {
+      const res = await fetch('/api/resume');
+      if (res.ok) {
+        const data = await res.json();
+        setResumes(data.resumes);
+        setStats(prev => ({ ...prev, totalResumes: data.resumes.length }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch resumes:', error);
+    } finally {
+      setIsLoadingResumes(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this resume?')) return;
+    
+    try {
+      const res = await fetch(`/api/resume/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setResumes(prev => prev.filter(r => r._id !== id));
+        setStats(prev => ({ ...prev, totalResumes: prev.totalResumes - 1 }));
+      } else {
+        alert('Failed to delete resume');
+      }
+    } catch (error) {
+      console.error('Error deleting:', error);
+    }
+  };
 
   if (status === 'loading') {
     return (
@@ -132,7 +174,14 @@ export default function Dashboard() {
           </div>
           
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {resumes.length === 0 ? (
+            {isLoadingResumes ? (
+              <div className="px-6 py-12 text-center text-slate-500">
+                <div className="animate-pulse flex flex-col items-center">
+                  <div className="h-6 w-32 bg-slate-200 dark:bg-slate-700 rounded mb-4"></div>
+                  <div className="h-4 w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                </div>
+              </div>
+            ) : resumes.length === 0 ? (
               <div className="px-6 py-12 text-center">
                 <p className="text-slate-500 dark:text-slate-400">No resumes created yet.</p>
                 <Link href="/resume" className="mt-4 text-blue-600 hover:text-blue-700 font-medium inline-block">
@@ -153,21 +202,21 @@ export default function Dashboard() {
                         {resume.title}
                       </h4>
                       <div className="text-sm text-slate-500 dark:text-slate-400 flex items-center mt-1">
-                        <span className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs mr-2">
-                          {resume.template}
+                        <span className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs mr-2 capitalize">
+                          {resume.template || 'Modern'}
                         </span>
-                        <span>Updated {resume.updatedAt}</span>
+                        <span>Updated {new Date(resume.updatedAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                    <button className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" title="Edit">
+                    <Link href={`/resume/${resume._id}`} className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" title="Edit/View">
                       <HiOutlinePencilAlt className="h-5 w-5" />
-                    </button>
-                    <button className="p-2 text-slate-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors" title="Download PDF">
+                    </Link>
+                    <Link href={`/resume/${resume._id}`} className="p-2 text-slate-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors" title="Download PDF">
                       <HiOutlineDownload className="h-5 w-5" />
-                    </button>
-                    <button className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors" title="Delete">
+                    </Link>
+                    <button onClick={() => handleDelete(resume._id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors" title="Delete">
                       <HiOutlineTrash className="h-5 w-5" />
                     </button>
                   </div>

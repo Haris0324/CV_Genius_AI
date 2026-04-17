@@ -9,7 +9,7 @@ import { useSession, signOut } from 'next-auth/react';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -57,21 +57,25 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.path}
-                className="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
+          {!session && (
+            <nav className="hidden md:flex items-center space-x-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.path}
+                  className="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
+          )}
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            {session ? (
+            {status === 'loading' ? (
+              <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 animate-pulse"></div>
+            ) : session ? (
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -153,32 +157,38 @@ export default function Navbar() {
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="md:hidden bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 shadow-lg absolute w-full"
-        >
-          <div className="px-4 pt-2 pb-6 space-y-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.path}
-                className="block px-3 py-3 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-md"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-col space-y-3 px-3">
-              {session ? (
-                <>
-                  <div className="flex items-center space-x-3 mb-4 px-2">
-                    <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
-                      {session.user?.image ? (
-                        <img src={session.user.image} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
-                      ) : (
-                        session.user?.name?.charAt(0).toUpperCase() || session.user?.email?.charAt(0).toUpperCase() || 'U'
-                      )}
+           initial={{ opacity: 0, y: -20 }}
+           animate={{ opacity: 1, y: 0 }}
+           exit={{ opacity: 0, y: -20 }}
+           className="md:hidden bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 shadow-lg absolute w-full"
+         >
+           <div className="px-4 pt-2 pb-6 space-y-1">
+             {!session && navLinks.map((link) => (
+               <Link
+                 key={link.name}
+                 href={link.path}
+                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-slate-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-slate-800 transition-colors"
+                 onClick={() => setIsMobileMenuOpen(false)}
+               >
+                 {link.name}
+               </Link>
+             ))}
+             
+             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+               {status === 'loading' ? (
+                 <div className="flex items-center space-x-3 mb-4 px-2">
+                   <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 animate-pulse"></div>
+                   <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded animate-pulse"></div>
+                 </div>
+               ) : session ? (
+                 <>
+                   <div className="flex items-center space-x-3 mb-4 px-2">
+                     <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                       {session.user?.image ? (
+                         <img src={session.user.image} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                       ) : (
+                         session.user?.name?.charAt(0).toUpperCase() || session.user?.email?.charAt(0).toUpperCase() || 'U'
+                       )}
                     </div>
                     <div className="overflow-hidden">
                       <p className="font-medium text-slate-900 dark:text-white truncate">{session.user?.name || 'User'}</p>
