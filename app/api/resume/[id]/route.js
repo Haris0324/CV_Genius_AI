@@ -11,7 +11,7 @@ async function authorizeResume(req, id) {
   if (!session) return { error: 'Unauthorized', status: 401 };
 
   await dbConnect();
-  const user = await User.findById(session.user.id);
+  const user = await User.findOne({ email: session.user.email });
   if (!user) return { error: 'User not found', status: 404 };
 
   const resume = await Resume.findById(id);
