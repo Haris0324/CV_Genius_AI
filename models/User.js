@@ -24,6 +24,15 @@ const UserSchema = new mongoose.Schema(
       enum: ['FREE', 'PRO', 'PREMIUM'],
       default: 'FREE',
     },
+    image: {
+      type: String,
+    },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

@@ -122,9 +122,9 @@ function LoginContent() {
                   Password
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+                  <Link href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
               </div>
               <div className="mt-1 relative rounded-xl shadow-sm">

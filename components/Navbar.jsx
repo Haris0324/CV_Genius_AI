@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { useSession, signOut } from 'next-auth/react';
@@ -12,13 +12,25 @@ export default function Navbar() {
   const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const navLinks = [
@@ -38,7 +50,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href={session ? '/dashboard' : '/'} className="flex items-center space-x-2">
             <span className="text-2xl font-extrabold tracking-tight">
               CVGenius <span className="text-gradient">AI</span>
             </span>
@@ -60,20 +72,50 @@ export default function Navbar() {
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {session ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="text-gray-900 dark:text-white font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  Dashboard
-                </Link>
+              <div className="relative" ref={profileRef}>
                 <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-sm"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold hover:bg-blue-700 transition ring-2 ring-transparent hover:ring-blue-300 dark:hover:ring-blue-800"
                 >
-                  Sign Out
+                  {session.user?.image ? (
+                    <img src={session.user.image} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                  ) : (
+                    session.user?.name?.charAt(0).toUpperCase() || session.user?.email?.charAt(0).toUpperCase() || 'U'
+                  )}
                 </button>
-              </>
+                
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 py-2 z-50 transform origin-top-right transition-all">
+                    <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700 mb-1">
+                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{session.user?.name || 'User'}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{session.user?.email}</p>
+                    </div>
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/account"
+                      className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      Account Settings
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        signOut({ callbackUrl: '/' });
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 mt-1 transition"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link
@@ -130,19 +172,39 @@ export default function Navbar() {
             <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-col space-y-3 px-3">
               {session ? (
                 <>
+                  <div className="flex items-center space-x-3 mb-4 px-2">
+                    <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                      {session.user?.image ? (
+                        <img src={session.user.image} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                      ) : (
+                        session.user?.name?.charAt(0).toUpperCase() || session.user?.email?.charAt(0).toUpperCase() || 'U'
+                      )}
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="font-medium text-slate-900 dark:text-white truncate">{session.user?.name || 'User'}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{session.user?.email}</p>
+                    </div>
+                  </div>
                   <Link
                     href="/dashboard"
-                    className="w-full text-center px-4 py-3 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md"
+                    className="w-full text-center px-4 py-3 text-base font-medium text-slate-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition shadow-sm"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    href="/account"
+                    className="w-full text-center px-4 py-3 text-base font-medium text-slate-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition shadow-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Account Settings
                   </Link>
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       signOut({ callbackUrl: '/' });
                     }}
-                    className="w-full text-center px-4 py-3 text-base font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-800 rounded-xl"
+                    className="w-full text-center px-4 py-3 text-base font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-md transition mt-2"
                   >
                     Sign Out
                   </button>

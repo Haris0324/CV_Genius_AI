@@ -85,3 +85,13 @@ body {
     transform: translate(30px, -50px) scale(1.1);
   }
 }
+
+/* Global Cursor Styles for interactivity */
+button, 
+a, 
+input[type="submit"], 
+input[type="button"], 
+input[type="reset"],
+[role="button"] {
+  cursor: pointer !important;
+}
