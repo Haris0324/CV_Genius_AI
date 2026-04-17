@@ -61,6 +61,10 @@ export async function POST(req) {
       }
     }
 
+    if (!openai) {
+      return NextResponse.json({ message: 'OpenAI API key is missing or not configured on the Vercel server.' }, { status: 500 });
+    }
+
     // Construct prompt
     const systemPrompt = `You are an expert ATS-friendly resume writer. Your job is to take the user's raw input and format it into a professional, highly polished resume tailored for the role of "${targetJob}". Focus on strong action verbs and quantifiable achievements. Return ONLY a valid JSON object with the following structure:
 {
@@ -116,6 +120,6 @@ export async function POST(req) {
 
   } catch (error) {
     console.error('AI Generation Error', error);
-    return NextResponse.json({ message: 'Error generating resume' }, { status: 500 });
+    return NextResponse.json({ message: error.message || 'Error generating resume' }, { status: 500 });
   }
 }
