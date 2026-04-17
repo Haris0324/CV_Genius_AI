@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/react';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { openai } from '@/lib/openai';
 import { redis } from '@/lib/redis';
 import dbConnect from '@/lib/mongodb';

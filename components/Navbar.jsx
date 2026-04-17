@@ -57,7 +57,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          {!session && (
+          {status === 'unauthenticated' && (
             <nav className="hidden md:flex items-center space-x-8">
               {navLinks.map((link) => (
                 <Link
@@ -163,7 +163,7 @@ export default function Navbar() {
            className="md:hidden bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 shadow-lg absolute w-full"
          >
            <div className="px-4 pt-2 pb-6 space-y-1">
-             {!session && navLinks.map((link) => (
+             {status === 'unauthenticated' && navLinks.map((link) => (
                <Link
                  key={link.name}
                  href={link.path}
