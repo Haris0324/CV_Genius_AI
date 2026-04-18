@@ -69,15 +69,18 @@ export const authOptions = {
       }
       if (token?.name) session.user.name = token.name;
       if (token?.picture) session.user.image = token.picture;
+      if (token?.subscription) session.user.subscription = token.subscription;
       return session;
     },
     async jwt({ token, user, trigger, session }) {
       if (trigger === "update" && session) {
         if (session.name) token.name = session.name;
         if (session.image) token.picture = session.image;
+        if (session.subscription) token.subscription = session.subscription;
       }
       if (user) {
         token.sub = user.id || user._id;
+        token.subscription = user.subscription;
       }
       return token;
     }

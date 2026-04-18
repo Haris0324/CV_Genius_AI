@@ -93,7 +93,7 @@ export default function Pricing() {
               href="/dashboard"
               className="w-full text-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white py-4 rounded-xl font-bold transition-colors"
             >
-              Current Plan
+              {session?.user?.subscription === 'PRO' ? 'Dashboard' : 'Current Plan'}
             </Link>
           </motion.div>
 
@@ -118,7 +118,7 @@ export default function Pricing() {
             <ul className="space-y-4 mb-8 flex-1">
               <li className="flex items-center text-slate-200">
                 <HiOutlineCheckCircle className="h-6 w-6 text-blue-400 mr-3 flex-shrink-0" />
-                <span>Unlimited AI resumes</span>
+                <span>20 AI resumes per month</span>
               </li>
               <li className="flex items-center text-slate-200">
                 <HiOutlineCheckCircle className="h-6 w-6 text-blue-400 mr-3 flex-shrink-0" />
@@ -129,13 +129,20 @@ export default function Pricing() {
                 <span>Priority AI generation processing</span>
               </li>
             </ul>
-            <button
-              onClick={() => handleSubscribe('price_demo_pro_id')}
-              disabled={isLoading}
-              className={`w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg hover-lift ${isLoading ? 'opacity-70 cursor-not-allowed bg-blue-800' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'}`}
-            >
-              {isLoading ? 'Processing...' : 'Upgrade to Pro'}
-            </button>
+            
+            {session?.user?.subscription === 'PRO' ? (
+              <div className="w-full py-4 rounded-xl font-bold text-slate-300 border border-slate-700 text-center bg-slate-800/50">
+                Current Plan
+              </div>
+            ) : (
+              <button
+                onClick={() => handleSubscribe('price_demo_pro_id')}
+                disabled={isLoading}
+                className={`w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg hover-lift ${isLoading ? 'opacity-70 cursor-not-allowed bg-blue-800' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'}`}
+              >
+                {isLoading ? 'Processing...' : 'Upgrade to Pro'}
+              </button>
+            )}
           </motion.div>
         </div>
       </div>

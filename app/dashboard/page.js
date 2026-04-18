@@ -16,7 +16,7 @@ import {
 } from 'react-icons/hi';
 
 export default function Dashboard() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   
   // Real Data
@@ -54,10 +54,20 @@ export default function Dashboard() {
       if (res.ok) {
         const data = await res.json();
         setResumes(data.resumes);
+        
+        const currentPlan = data.subscription || session?.user?.subscription || 'FREE';
+        
+        if (data.subscription && session?.user?.subscription !== data.subscription) {
+          update({ subscription: data.subscription });
+        }
+        
+        const limit = currentPlan === 'PRO' ? 20 : (currentPlan === 'PREMIUM' ? Infinity : 3);
+        
         setStats(prev => ({ 
           ...prev, 
+          plan: currentPlan,
           totalResumes: data.resumes.length,
-          resumesLeft: Math.max(0, 3 - (data.limitsUsed || 0)) 
+          resumesLeft: currentPlan === 'PREMIUM' ? 'Unlimited' : Math.max(0, limit - (data.limitsUsed || 0)) 
         }));
       }
     } catch (error) {

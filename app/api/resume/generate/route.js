@@ -9,16 +9,19 @@ import Resume from '@/models/Resume';
 
 // Helper to check user limits
 async function checkLimits(userId, plan) {
-  if (plan === 'PRO' || plan === 'PREMIUM') return true;
+  if (plan === 'PREMIUM') return true;
   
-  // Free plan limit check using Redis
+  // Free and PRO plan limit check using Redis
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
   const key = `resume_count:${userId}:${currentMonth}`;
   
   let count = await redis.get(key);
   if (!count) count = 0;
   
-  if (parseInt(count) >= 3) {
+  let maxLimit = 3; // FREE
+  if (plan === 'PRO') maxLimit = 20;
+
+  if (parseInt(count) >= maxLimit) {
     return false; // Limit exceeded
   }
   return true;
@@ -26,7 +29,7 @@ async function checkLimits(userId, plan) {
 
 // Helper to increment usage
 async function incrementUsage(userId, plan) {
-  if (plan === 'PRO' || plan === 'PREMIUM') return;
+  if (plan === 'PREMIUM') return;
   
   const currentMonth = new Date().toISOString().slice(0, 7);
   const key = `resume_count:${userId}:${currentMonth}`;

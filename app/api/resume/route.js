@@ -26,14 +26,14 @@ export async function GET(req) {
 
     // Fetch limits
     let limitsUsed = 0;
-    if (redis && user.subscription !== 'PRO' && user.subscription !== 'PREMIUM') {
+    if (redis && user.subscription !== 'PREMIUM') {
       const currentMonth = new Date().toISOString().slice(0, 7);
       const key = `resume_count:${user._id.toString()}:${currentMonth}`;
       const count = await redis.get(key);
       limitsUsed = count ? parseInt(count) : 0;
     }
 
-    return NextResponse.json({ resumes, limitsUsed }, { status: 200 });
+    return NextResponse.json({ resumes, limitsUsed, subscription: user.subscription }, { status: 200 });
 
   } catch (error) {
     console.error('Fetch Resumes Error', error);
