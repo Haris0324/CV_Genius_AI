@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/> <!-- Blue-500 -->
+      <stop offset="100%" stop-color="#A855F7"/> <!-- Purple-500 -->
+    </linearGradient>
+  </defs>
+  <!-- Document Base -->
+  <rect x="22" y="15" width="56" height="74" rx="8" fill="none" stroke="url(#gradient)" stroke-width="8"/>
+  
+  <!-- Document Lines (representing CV structure) -->
+  <line x1="38" y1="35" x2="62" y2="35" stroke="url(#gradient)" stroke-width="6" stroke-linecap="round"/>
+  <line x1="38" y1="52" x2="62" y2="52" stroke="url(#gradient)" stroke-width="6" stroke-linecap="round"/>
+  <line x1="38" y1="69" x2="52" y2="69" stroke="url(#gradient)" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- AI Sparkle/Star Indicator -->
+  <path d="M 85 5 Q 89 16 100 20 Q 89 24 85 35 Q 81 24 70 20 Q 81 16 85 5 Z" fill="#F59E0B"/>
+  <path d="M 12 40 Q 14 46 20 48 Q 14 50 12 56 Q 10 50 4 48 Q 10 46 12 40 Z" fill="#3B82F6" opacity="0.6"/>
+</svg>
