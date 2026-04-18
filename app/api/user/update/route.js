@@ -23,7 +23,11 @@ export async function PATCH(req) {
     }
 
     if (name) user.name = name;
-    if (image) user.image = image;
+    
+    // Only update image if it's new (a base64 string or an external google url), not the dynamic proxy url
+    if (image && (image.startsWith('data:image') || image.startsWith('http'))) {
+      user.image = image;
+    }
 
     await user.save();
 
