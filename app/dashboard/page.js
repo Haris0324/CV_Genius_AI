@@ -37,7 +37,26 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      fetchResumes();
+      const init = async () => {
+        // Handle Stripe success redirect if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        
+        if (sessionId) {
+          try {
+            await fetch(`/api/stripe/verify?session_id=${sessionId}`);
+            // Clean up the URL
+            router.replace('/dashboard');
+          } catch (err) {
+            console.error('Failed to verify checkout', err);
+          }
+        }
+        
+        // Fetch resumes data which will now reflect the freshly updated database
+        fetchResumes();
+      };
+      
+      init();
       
       // Update plan based on session if available
       setStats(prev => ({
@@ -45,7 +64,7 @@ export default function Dashboard() {
         plan: session?.user?.subscription || 'FREE'
       }));
     }
-  }, [status, session]);
+  }, [status, session, router]);
 
   const fetchResumes = async () => {
     setIsLoadingResumes(true);
