@@ -92,16 +92,25 @@ export async function POST(req) {
       ${education}
     `;
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      generationConfig: {
-        responseMimeType: "application/json",
-      }
-    });
-
-    const fullPrompt = `${systemPrompt}\n\nHere is the raw data:\n${userPrompt}`;
-    const result = await model.generateContent(fullPrompt);
-    const aiContent = JSON.parse(result.response.text());
+    let result;
+    try {
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash-latest",
+        generationConfig: { responseMimeType: "application/json" }
+      });
+      const fullPrompt = `${systemPrompt}\n\nHere is the raw data:\n${userPrompt}`;
+      result = await model.generateContent(fullPrompt);
+    } catch (e) {
+      console.log('Failed using gemini-1.5-flash-latest, falling back to gemini-pro...', e.message);
+      const fallbackModel = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const fullPrompt = `${systemPrompt}\n\nEnsure output is pure JSON. Here is the raw data:\n${userPrompt}`;
+      result = await fallbackModel.generateContent(fullPrompt);
+    }
+    
+    let rawText = result.response.text();
+    // Clean up potential markdown formatting from gemini-pro
+    rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const aiContent = JSON.parse(rawText);
 
     // Save to DB
     const newResume = await Resume.create({
