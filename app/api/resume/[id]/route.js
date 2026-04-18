@@ -27,7 +27,7 @@ async function authorizeResume(req, id) {
 // GET single resume by ID
 export async function GET(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { error, status, resume } = await authorizeResume(req, id);
     
     if (error) {
@@ -44,7 +44,7 @@ export async function GET(req, { params }) {
 // DELETE single resume by ID
 export async function DELETE(req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { error, status, resume } = await authorizeResume(req, id);
     
     if (error) {
