@@ -22,6 +22,10 @@ export async function POST(req) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
+    if (!stripe) {
+      return NextResponse.json({ message: 'Stripe is not configured. Missing STRIPE_SECRET_KEY.' }, { status: 500 });
+    }
+
     let line_items;
     
     if (planId === 'price_demo_pro_id') {
@@ -50,13 +54,16 @@ export async function POST(req) {
       ];
     }
 
+    // Attempt to get the origin URL correctly for Vercel
+    const origin = process.env.NEXT_PUBLIC_APP_URL || req.headers.get('origin') || 'http://localhost:3000';
+
     // Prepare Stripe checkout session
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
       line_items,
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?checkout=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?checkout=canceled`,
+      success_url: `${origin}/dashboard?checkout=success`,
+      cancel_url: `${origin}/pricing?checkout=canceled`,
       customer_email: user.email,
       client_reference_id: user._id.toString(),
     });
@@ -65,6 +72,6 @@ export async function POST(req) {
 
   } catch (error) {
     console.error('Stripe Checkout Error', error);
-    return NextResponse.json({ message: 'Error initiating checkout' }, { status: 500 });
+    return NextResponse.json({ message: `Stripe Error: ${error.message}` }, { status: 500 });
   }
 }
