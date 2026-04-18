@@ -67,9 +67,15 @@ export const authOptions = {
       if (token?.sub) {
         session.user.id = token.sub;
       }
+      if (token?.name) session.user.name = token.name;
+      if (token?.picture) session.user.image = token.picture;
       return session;
     },
     async jwt({ token, user, trigger, session }) {
+      if (trigger === "update" && session) {
+        if (session.name) token.name = session.name;
+        if (session.image) token.picture = session.image;
+      }
       if (user) {
         token.sub = user.id || user._id;
       }
@@ -81,8 +87,7 @@ export const authOptions = {
   },
   session: {
     strategy: 'jwt',
-    // maxAge: 3 * 60 * 60, // 3 hours timeout
-    maxAge: 2 * 60,
+    maxAge: 3 * 60 * 60, // 3 hours timeout
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

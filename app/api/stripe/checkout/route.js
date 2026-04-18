@@ -22,16 +22,39 @@ export async function POST(req) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
+    let line_items;
+    
+    if (planId === 'price_demo_pro_id') {
+      line_items = [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'CVGenius AI Pro Plan',
+              description: 'Unlimited AI resumes and premium templates',
+            },
+            unit_amount: 900, // $9.00
+            recurring: {
+              interval: 'month',
+            },
+          },
+          quantity: 1,
+        },
+      ];
+    } else {
+      line_items = [
+        {
+          price: planId,
+          quantity: 1,
+        },
+      ];
+    }
+
     // Prepare Stripe checkout session
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
-      line_items: [
-        {
-          price: planId, // Replace with your actual Stripe Price ID
-          quantity: 1,
-        },
-      ],
+      line_items,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?checkout=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?checkout=canceled`,
       customer_email: user.email,

@@ -8,9 +8,18 @@ import { HiOutlineCheckCircle } from 'react-icons/hi';
 import Link from 'next/link';
 
 export default function Pricing() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [wasAuthenticated, setWasAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      setWasAuthenticated(true);
+    } else if (status === 'unauthenticated' && wasAuthenticated) {
+      router.push('/login?message=SessionExpired');
+    }
+  }, [status, wasAuthenticated, router]);
 
   // We reuse the basic design from the landing page but with actual Checkout logic
   const handleSubscribe = async (planId) => {

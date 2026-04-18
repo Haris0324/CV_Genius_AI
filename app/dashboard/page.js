@@ -217,7 +217,7 @@ export default function Dashboard() {
                     <Link href={`/resume/${resume._id}`} className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" title="View">
                       <HiOutlineDocumentReport className="h-5 w-5" />
                     </Link>
-                    <Link href={`/resume/${resume._id}`} className="p-2 text-slate-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors" title="Download PDF">
+                    <Link href={`/resume/${resume._id}/download`} className="p-2 text-slate-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors" title="Download PDF">
                       <HiOutlineDownload className="h-5 w-5" />
                     </Link>
                     <button onClick={() => handleDelete(resume._id)} className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors" title="Delete">
