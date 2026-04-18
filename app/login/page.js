@@ -13,6 +13,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const registered = searchParams.get('registered');
+  const sessionExpired = searchParams.get('message') === 'SessionExpired';
   
   useEffect(() => {
     if (status === 'authenticated') {
@@ -87,6 +88,12 @@ function LoginContent() {
           {registered && (
             <div className="mb-6 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 p-4 rounded-xl text-sm text-center">
               Account created successfully! Please log in.
+            </div>
+          )}
+
+          {sessionExpired && (
+            <div className="mb-6 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-400 p-4 rounded-xl text-sm text-center font-medium">
+              You have been automatically logged out due to inactivity to protect your account. Please log in again.
             </div>
           )}
 

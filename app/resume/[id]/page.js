@@ -74,6 +74,12 @@ export default function ResumeViewer() {
           <Link href="/dashboard" className="flex items-center text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">
             <HiOutlineArrowLeft className="mr-2" /> Back to Dashboard
           </Link>
+          <button 
+            onClick={() => window.print()}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+          >
+            <HiOutlineDownload className="mr-2" /> Save PDF / Print
+          </button>
         </div>
 
         {/* The Resume Document */}
