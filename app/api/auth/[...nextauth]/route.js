@@ -75,12 +75,24 @@ export const authOptions = {
     async jwt({ token, user, trigger, session }) {
       if (trigger === "update" && session) {
         if (session.name) token.name = session.name;
-        if (session.image) token.picture = session.image;
+        // Never put massive base64 strings into the token cookie
+        if (session.image && !session.image.startsWith('data:image')) {
+          token.picture = session.image;
+        } else if (session.image && session.image.startsWith('data:image')) {
+          token.picture = `/api/user/avatar?t=${Date.now()}`; // use dynamic endpoint instead
+        }
         if (session.subscription) token.subscription = session.subscription;
       }
       if (user) {
         token.sub = user.id || user._id;
         token.subscription = user.subscription;
+        
+        // During login, if user.image from DB is base64, translate to avatar endpoint
+        if (user.image && !user.image.startsWith('data:image')) {
+          token.picture = user.image;
+        } else if (user.image && user.image.startsWith('data:image')) {
+          token.picture = `/api/user/avatar?t=${Date.now()}`;
+        }
       }
       return token;
     }

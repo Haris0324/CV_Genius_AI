@@ -54,8 +54,8 @@ export default function AccountSettings() {
 
       setStatus({ type: 'success', message: 'Profile updated successfully!' });
       
-      // Update next-auth session
-      await update({ name, image: imagePreview });
+      // Update next-auth session safely without stuffing massive base64 text
+      await update({ name, image: `/api/user/avatar?t=${Date.now()}` });
       
     } catch (error) {
       setStatus({ type: 'error', message: error.message });
