@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { openai } from '@/lib/openai';
+import { genAI } from '@/lib/gemini';
 import { redis } from '@/lib/redis';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
@@ -61,8 +61,8 @@ export async function POST(req) {
       }
     }
 
-    if (!openai) {
-      return NextResponse.json({ message: 'OpenAI API key is missing or not configured on the Vercel server.' }, { status: 500 });
+    if (!genAI) {
+      return NextResponse.json({ message: 'Gemini API key is missing or not configured on the Vercel server.' }, { status: 500 });
     }
 
     // Construct prompt
@@ -92,17 +92,16 @@ export async function POST(req) {
       ${education}
     `;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0.7,
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+      }
     });
 
-    const aiContent = JSON.parse(completion.choices[0].message.content);
+    const fullPrompt = `${systemPrompt}\n\nHere is the raw data:\n${userPrompt}`;
+    const result = await model.generateContent(fullPrompt);
+    const aiContent = JSON.parse(result.response.text());
 
     // Save to DB
     const newResume = await Resume.create({
