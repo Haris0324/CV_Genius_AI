@@ -13,11 +13,15 @@ export default function RootLayout({ children }) {
     <html lang="en" className="scroll-smooth">
       <body suppressHydrationWarning className="antialiased min-h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
         <NextAuthProvider>
-          <Navbar />
-          <main className="flex-1 pt-20">
+          <div className="print:hidden">
+            <Navbar />
+          </div>
+          <main className="flex-1 pt-20 print:pt-0">
             {children}
           </main>
-          <Footer />
+          <div className="print:hidden">
+            <Footer />
+          </div>
         </NextAuthProvider>
       </body>
     </html>

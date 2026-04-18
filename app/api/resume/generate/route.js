@@ -66,9 +66,14 @@ export async function POST(req) {
     }
 
     // Construct prompt
-    const systemPrompt = `You are an expert ATS-friendly resume writer. Your job is to take the user's raw input and format it into a professional, highly polished resume tailored for the role of "${targetJob}". Focus on strong action verbs and quantifiable achievements. Return ONLY a valid JSON object with the following structure:
+    const systemPrompt = `You are an expert ATS-friendly resume writer. Your job is to take the user's raw input and format it into a professional, highly polished resume tailored for the role of "${targetJob}".
+CRITICAL CONSTRAINT: You MUST be extremely concise. 
+1. The final resume MUST fit onto a single page. Do NOT invent excessive details.
+2. Experience bullet points must be exactly 2-3 per role max. Keep sentences short and punchy.
+3. Summary should be exactly 2-3 sentences.
+Return ONLY a valid JSON object with the following structure:
 {
-  "summary": "Professional summary paragraph...",
+  "summary": "Professional summary...",
   "experience": [
     { "company": "...", "role": "...", "duration": "...", "description": ["bullet 1", "bullet 2"] }
   ],

@@ -54,7 +54,11 @@ export default function Dashboard() {
       if (res.ok) {
         const data = await res.json();
         setResumes(data.resumes);
-        setStats(prev => ({ ...prev, totalResumes: data.resumes.length }));
+        setStats(prev => ({ 
+          ...prev, 
+          totalResumes: data.resumes.length,
+          resumesLeft: Math.max(0, 3 - (data.limitsUsed || 0)) 
+        }));
       }
     } catch (error) {
       console.error('Failed to fetch resumes:', error);
@@ -210,8 +214,8 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                    <Link href={`/resume/${resume._id}`} className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" title="Edit/View">
-                      <HiOutlinePencilAlt className="h-5 w-5" />
+                    <Link href={`/resume/${resume._id}`} className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" title="View">
+                      <HiOutlineDocumentReport className="h-5 w-5" />
                     </Link>
                     <Link href={`/resume/${resume._id}`} className="p-2 text-slate-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors" title="Download PDF">
                       <HiOutlineDownload className="h-5 w-5" />

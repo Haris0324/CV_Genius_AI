@@ -95,3 +95,4 @@ input[type="reset"],
 [role="button"] {
   cursor: pointer !important;
 }
+@media print { @page { margin: 0; } }
